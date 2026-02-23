@@ -1,0 +1,34 @@
+# Example Terraform Variables - Copy to terraform.tfvars and customize
+
+# AWS Configuration
+aws_profile = "default"
+aws_region = "us-east-1"
+
+# Existing Infrastructure (when deploy_* = false)
+existing_vpc_id = ""  # Required when deploy_vpc = false
+existing_key_pair_name = ""  # Optional, will auto-discover if empty
+
+# Security
+grafana_admin_password = ""  # Will generate random if empty
+
+# Cluster Configuration
+cluster_name = "telco-eks-cluster"
+cluster_version = "1.32"
+
+# Network Configuration
+vpc_cidr = "100.77.0.0/16"
+edge_subnet_cidr = "100.77.4.0/24"
+
+# Outposts Configuration (optional)
+use_outposts = false
+outpost_id = ""
+outpost_account_id = ""
+
+# Dedicated Host Configuration (optional)
+use_dedicated_host = false
+dedicated_host_id = ""
+
+# Instance Configuration
+worker_instance_type = "m5.2xlarge"
+outpost_instance_type = "bmn-sf2.metal-32xl"
+desired_capacity = 1

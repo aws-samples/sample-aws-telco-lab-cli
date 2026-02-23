@@ -1,0 +1,61 @@
+{
+  "AccessDenied": {
+    "description": "IAM permissions issue - the credentials don't have required permissions",
+    "common_causes": [
+      "Missing IAM policy permissions",
+      "Incorrect AWS profile selected",
+      "Session token expired",
+      "Resource-based policy blocking access"
+    ],
+    "solutions": [
+      "Check IAM policies attached to your user/role",
+      "Verify you're using the correct AWS profile with --profile",
+      "Refresh your AWS credentials if using temporary credentials",
+      "Check resource-based policies (e.g., S3 bucket policies)"
+    ],
+    "aws_docs": "https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_access-denied.html"
+  },
+  "InvalidParameterValue": {
+    "description": "One or more parameters have invalid values",
+    "common_causes": [
+      "Incorrect parameter format",
+      "Value out of acceptable range",
+      "Incompatible parameter combination"
+    ],
+    "solutions": [
+      "Check parameter format in command documentation",
+      "Verify parameter values are within acceptable ranges",
+      "Review parameter combinations for compatibility"
+    ],
+    "aws_docs": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/errors-overview.html"
+  },
+  "ResourceNotFound": {
+    "description": "The specified resource doesn't exist",
+    "common_causes": [
+      "Resource ID is incorrect",
+      "Resource was deleted",
+      "Wrong region selected",
+      "Resource in different account"
+    ],
+    "solutions": [
+      "Verify the resource ID is correct",
+      "Check if resource exists in the AWS Console",
+      "Ensure you're in the correct region with --region",
+      "Confirm you're using the correct AWS account"
+    ],
+    "aws_docs": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/errors-overview.html"
+  },
+  "ThrottlingException": {
+    "description": "API rate limit exceeded",
+    "common_causes": [
+      "Too many API calls in short time",
+      "Shared account limits reached"
+    ],
+    "solutions": [
+      "Implement exponential backoff and retry",
+      "Reduce frequency of API calls",
+      "Request service quota increase if needed"
+    ],
+    "aws_docs": "https://docs.aws.amazon.com/general/latest/gr/api-retries.html"
+  }
+}
