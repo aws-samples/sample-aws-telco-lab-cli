@@ -1,0 +1,30 @@
+*~
+*#
+*.swp
+
+*.DS_Store
+
+# PID files
+.attach_pid*
+
+# Backup files
+*.backup
+*.bak
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+/.coverage
+/.coverage.*
+/.cache
+/.pytest_cache
+/.mypy_cache
+
+/doc/_apidoc/
+/build
+dist/
+
+terraform/eks/.terraform
+templates/terraform/eks/modules
