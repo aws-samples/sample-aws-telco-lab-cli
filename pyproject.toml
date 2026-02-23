@@ -1,0 +1,84 @@
+[project]
+name = "telcocli"
+version = "1.0.0"
+description = "AWS Telco CLI - Command line tools for AWS Telco operations"
+authors = [{name = "Amazon Web Services"}]
+license = {text = "MIT-0"}
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+]
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+known_first_party = ["telco_cli"]
+
+# required for compatibility with black:
+profile = "black"
+
+# To maintain consistency with other settings
+line_length = 100
+
+[tool.mypy]
+# See https://mypy.readthedocs.io/en/latest/config_file.html for more mypy options.
+
+# Enables the type-checker on the interior of functions without type annotations.
+check_untyped_defs = true
+
+# Displaying specific error codes makes it easier to silence specific errors
+# See also https://mypy.readthedocs.io/en/latest/error_codes.html
+show_error_codes = true
+
+# Show source code snippets and location markers in error messages
+pretty = true
+
+# Suppresses errors about packages which do not implement type-hint sharing.
+# See also https://mypy.readthedocs.io/en/latest/running_mypy.html#missing-imports.
+ignore_missing_imports = true
+
+# TODO: Enable stricter type checking once all functions are annotated
+# disallow_untyped_defs = true
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/test_*",
+    "*/conftest.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    # re-enable the standard pragma since custome exclude lines ovverrides it
+    "pragma: no cover",
+    
+    # Don't complain about missing debug-only code
+    "def __repr__",
+    "if self\\.debug",
+    
+    # Don't complain about routine logging and console output
+    # NOTE: logger.error and logger.exception are NOT excluded
+    # These are critical logs that should be tested
+    "^\\s*logger\\.debug",
+    "^\\s*logger\\.info", 
+    "^\\s*console\\.print",
+    
+    # Don't complain if tests don't hit defensive assertion code
+    "raise AssertionError",
+    "raise NotImplementedError",
+    
+    # Don't complain if non-runnable code isn't run
+    "if 0:",
+    "if __name__ == .__main__.:",
+    
+    # Don't complain about abstract methods
+    "@(abc\\.)?abstractmethod",
+]

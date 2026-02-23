@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "telcocli": {
+      "command": "telcocli-mcp",
+      "args": [],
+      "env": {}
+    },
+    "telco-cli-agent": {
+      "command": "python",
+      "args": ["-m", "telco_cli.telcocli_agent.mcp_server"],
+      "env": {
+        "TELCO_CLI_VERBOSE": "false"
+      }
+    },
+    "aws-api-mcp": {
+      "command": "npx",
+      "args": ["-y", "aws-api-mcp"],
+      "env": {}
+    },
+    "aws-documentation-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "@awslabs/aws-documentation-mcp-server"],
+      "env": {}
+    }
+  }
+}

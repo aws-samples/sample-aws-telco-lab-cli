@@ -1,0 +1,110 @@
+TelcoCLI - Telecommunications Operations CLI
+
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+SPDX-License-Identifier: MIT-0
+
+This product includes software developed at Amazon Web Services (AWS).
+
+This software is provided as sample code for demonstration purposes only.
+It is not intended for production use without proper security hardening,
+testing, and validation.
+
+---
+
+## Third-Party Dependencies
+
+This project uses the following third-party libraries:
+
+### Runtime Dependencies
+
+**boto3** (>= 1.0)
+  - License: Apache License 2.0
+  - Copyright: Amazon.com, Inc. or its affiliates
+  - URL: https://github.com/boto/boto3
+  - Purpose: AWS SDK for Python
+
+**botocore** (>= 1.0)
+  - License: Apache License 2.0
+  - Copyright: Amazon.com, Inc. or its affiliates
+  - URL: https://github.com/boto/botocore
+  - Purpose: Low-level AWS service interface (boto3 dependency)
+
+**rich** (>= 14.0)
+  - License: MIT License
+  - Copyright: Will McGugan
+  - URL: https://github.com/Textualize/rich
+  - Purpose: Enhanced console output, tables, and logging
+
+**mcp** (>= 0.1.0)
+  - License: MIT License
+  - Copyright: Anthropic, PBC
+  - URL: https://github.com/modelcontextprotocol/python-sdk
+  - Purpose: Model Context Protocol support for AI agent integration
+
+**strands** (strands-agents)
+  - License: Apache License 2.0
+  - Copyright: Amazon.com, Inc. or its affiliates
+  - URL: https://github.com/strands-agents/sdk-python
+  - Purpose: AI agent framework for the ask-agent command
+
+### Test Dependencies
+
+**pytest** (>= 8.0)
+  - License: MIT License
+  - Copyright: Holger Krekel and pytest contributors
+  - URL: https://github.com/pytest-dev/pytest
+  - Purpose: Testing framework
+
+**pytest-cov** (>= 4.0)
+  - License: MIT License
+  - Copyright: Marc Schlaich
+  - URL: https://github.com/pytest-dev/pytest-cov
+  - Purpose: Test coverage reporting
+
+**coverage** (>= 7.0)
+  - License: Apache License 2.0
+  - Copyright: Ned Batchelder
+  - URL: https://github.com/nedbat/coveragepy
+  - Purpose: Code coverage measurement
+
+### Optional/Development Dependencies
+
+**argcomplete** (>= 2.0.0)
+  - License: Apache License 2.0
+  - Copyright: Andrey Kislyuk
+  - URL: https://github.com/kislyuk/argcomplete
+  - Purpose: Shell tab completion for CLI commands
+
+**aiohttp** (>= 3.8.0)
+  - License: Apache License 2.0
+  - Copyright: aio-libs contributors
+  - URL: https://github.com/aio-libs/aiohttp
+  - Purpose: Async HTTP client for MCP server integration
+
+**pydantic** (>= 2.0.0)
+  - License: MIT License
+  - Copyright: Samuel Colvin
+  - URL: https://github.com/pydantic/pydantic
+  - Purpose: Data validation for MCP protocol messages
+
+---
+
+## License Summary
+
+| Dependency | License |
+|------------|---------|
+| boto3 | Apache-2.0 |
+| botocore | Apache-2.0 |
+| rich | MIT |
+| mcp | MIT |
+| strands | Apache-2.0 |
+| pytest | MIT |
+| pytest-cov | MIT |
+| coverage | Apache-2.0 |
+| argcomplete | Apache-2.0 |
+| aiohttp | Apache-2.0 |
+| pydantic | MIT |
+
+All dependencies use permissive open-source licenses (Apache-2.0 or MIT)
+compatible with the MIT-0 license of this project.

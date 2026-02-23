@@ -1,0 +1,16 @@
+boto3>=1.26.0
+botocore>=1.29.0
+boto3-stubs[sts,organizations,iam,ec2,outposts]>=1.26.0
+types-PyYAML>=6.0.0
+rich>=13.0.0
+requests>=2.28.0
+argcomplete>=2.0.0
+# Enhanced MCP integration
+aiohttp>=3.8.0
+pydantic>=2.0.0
+mcp>=0.1.0
+# Testing dependencies
+pytest>=8.0.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.10.0
+pytest-cov>=4.0.0
