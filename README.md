@@ -4,9 +4,6 @@
 
 AWS Telco CLI - Command line tools for AWS Telco operations
 
-Version set is CSECommandLineTools/development
-Tests run in CSECommandLineToolsTests
-
 <!-- Branch: open-source -->
 
 ## ⚠️ Security and Legal Notices
@@ -32,48 +29,115 @@ This project is licensed under the MIT-0 License. See the [LICENSE](LICENSE) fil
 
 ## Installation
 
-### Requirements
+### Prerequisites
+
 - Python 3.9 or higher
-- AWS credentials configured
+- AWS CLI installed and configured with valid credentials
+- Git (to clone the repository)
 
-### Install from source
+### Quick Start
+
 ```bash
+# Clone the repository
+git clone https://github.com/aws-samples/sample-aws-telco-lab-cli.git
+cd sample-aws-telco-lab-cli
+
+# Install the CLI
 pip install .
+
+# Verify installation
+telcocli --help
 ```
 
+### Install for Development
 
-### Install with test dependencies
+If you plan to modify the source code, install in editable mode:
+
 ```bash
-pip install .[test]
+pip install -e .
 ```
 
-## Package Structure
+### Install with Test Dependencies
 
-The setup.py configuration includes:
+```bash
+pip install ".[test]"
+```
 
-### Data Files
-- Configuration files from `configuration/` directory are bundled with the package
-- Directory structure is preserved during installation
-- Includes AWS configs, templates, and other non-Python resources
+### AWS Credentials Setup
+
+TelcoCLI requires AWS credentials to interact with AWS services. Configure them using one of:
+
+```bash
+# Option 1: AWS CLI configuration
+aws configure
+
+# Option 2: Environment variables
+export AWS_ACCESS_KEY_ID=your_access_key
+export AWS_SECRET_ACCESS_KEY=your_secret_key
+export AWS_DEFAULT_REGION=us-east-1
+
+# Option 3: Use a named profile
+telcocli --profile your-profile-name <command>
+```
 
 ### Dependencies
-- **Core**: boto3, botocore (AWS SDK)
-- **Test**: pytest, pytest-cov, coverage
 
-### CLI Entry Point
-After installation, the `telcocli` command is available globally and runs `telco_cli.cli:main`
+- **Core**: boto3, botocore (AWS SDK), rich (console output), mcp (Model Context Protocol)
+- **Test**: pytest, pytest-cov, coverage
 
 ## Usage
 
 ```bash
-telcocli
+# Show all available commands
 telcocli --help
+
+# Run a specific command
+telcocli health
+telcocli list-outposts
+telcocli list-all-accounts
+
+# Use verbose mode for debugging
+telcocli -v <command>
+
+# Specify AWS profile and region
+telcocli --profile my-profile --region us-west-2 <command>
 ```
 
-## Documentation
+### Available Commands
 
-Generated documentation for the latest released version can be accessed here:
-https://devcentral.amazon.com/ac/brazil/package-master/package/go/documentation?name=TelcoCLI&interface=1.0&versionSet=live
+| Command | Description |
+|---------|-------------|
+| `analyze-dedicated-hosts` | Analyze dedicated hosts with assignment tracking |
+| `ask` | Ask the TelcoCLI AI agent for help (interactive mode) |
+| `assign-dedicated-host` | Assign a dedicated host to a partner or account |
+| `configure-credentials` | Configure AWS account to profile mappings |
+| `configure-eks-access` | Configure kubectl access to EKS cluster |
+| `create-partner` | Create partner account with cross-account role |
+| `create-vpn` | Generate VPN certificates for partner access |
+| `delete-partner` | Delete a partner account |
+| `deploy-eks-full` | Deploy complete EKS infrastructure via Terraform |
+| `describe-outpost` | Get detailed info about a specific Outpost |
+| `describe-partner` | Describe a specific partner account |
+| `get-outpost-utilization-summary` | Get utilization summary across all Outposts |
+| `health` | Run health checks for production monitoring |
+| `install-completion` | Install shell completion for bash/zsh |
+| `list-all-accounts` | List all accounts in AWS Organizations |
+| `list-outposts` | List all AWS Outposts and their status |
+| `list-partners` | List all partner accounts |
+| `list-test-servers` | List all SSM managed test servers |
+| `list-vpn-certificates` | List active VPN certificates |
+| `release-dedicated-host` | Release a dedicated host assignment |
+| `revoke-vpn-certificate` | Revoke VPN certificates for a partner |
+| `start-ssm` | Start an SSM session to a managed instance |
+| `update-credentials` | Update AWS credentials |
+
+For detailed command guides, see:
+- [EKS Commands Guide](doc/commands/EKS_COMMANDS_GUIDE.md)
+- [Outposts Commands Guide](doc/commands/OUTPOSTS_COMMANDS_GUIDE.md)
+- [VPN Commands Guide](doc/commands/VPN_COMMANDS_GUIDE.md)
+- [Workflows Guide](doc/commands/telcocli-workflows.md)
+
+## Documentation
 
 ### Security Documentation
 
@@ -120,15 +184,6 @@ For security considerations and best practices, see [SECURITY.md](SECURITY.md).
 
 To report security vulnerabilities, please see our [Security Policy](SECURITY.md#reporting-security-issues).
 
-### Security Documentation
-
-- **[SECURITY.md](SECURITY.md)** - Security vulnerability reporting and operational security guidelines
-- **[doc/DATA_SECURITY_STRATEGY.md](doc/DATA_SECURITY_STRATEGY.md)** - Comprehensive data security strategy including encryption, key management, and access controls
-- **[doc/ENCRYPTION_IMPLEMENTATION_GUIDE.md](doc/ENCRYPTION_IMPLEMENTATION_GUIDE.md)** - Practical implementation guide for encrypting sensitive data
-- **[doc/IAM_LEAST_PRIVILEGE_GUIDE.md](doc/IAM_LEAST_PRIVILEGE_GUIDE.md)** - IAM least privilege principles and policy scoping strategies
-- **[doc/ARCHITECTURE.md](doc/ARCHITECTURE.md)** - System architecture and security design
-- **[doc/THREAT_MODEL.md](doc/THREAT_MODEL.md)** - Threat analysis and security controls
-
 ## Development
 
-See instructions in DEVELOPMENT.md
+See instructions in [DEVELOPMENT.md](DEVELOPMENT.md).
