@@ -143,9 +143,10 @@ class KnowledgeBaseBuilder:
         for node in ast.walk(func_node):
             if isinstance(node, ast.Return) and node.value:
                 if isinstance(node.value, ast.Constant):
-                    return str(node.value.value)
+                    value = node.value.value
+                    return str(value) if isinstance(value, str) else ""
                 elif isinstance(node.value, ast.Str):  # Python 3.7 compatibility
-                    return node.value.s
+                    return str(node.value.s)
         return ""
 
     def _extract_parameters(self, func_node: ast.FunctionDef) -> List[Dict[str, Any]]:
