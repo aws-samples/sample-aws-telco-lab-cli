@@ -5,10 +5,9 @@ types-PyYAML>=6.0.0
 rich>=13.0.0
 requests>=2.28.0
 argcomplete>=2.0.0
-# Enhanced MCP integration
+# Enhanced MCP integration (optional)
 aiohttp>=3.8.0
 pydantic>=2.0.0
-mcp>=0.1.0
 # Testing dependencies
 pytest>=8.0.0
 pytest-asyncio>=0.21.0
