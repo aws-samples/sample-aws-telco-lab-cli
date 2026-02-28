@@ -24,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
+          pip install 'black==24.10.0' isort flake8 mypy bandit safety
           pip install -r requirements.txt || echo "Some requirements failed, continuing..."
-          pip install black isort flake8 mypy bandit safety
           pip install -e . --no-deps
       
       - name: Lint with black
