@@ -1,0 +1,95 @@
+name: Slack Notifications
+
+on:
+  pull_request:
+    types: [opened, closed, reopened]
+    branches: [ main, open-source-v1 ]
+  push:
+    branches: [ main, open-source-v1 ]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify PR opened
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "🔔 New Pull Request",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*New PR Opened*\n*Repository:* ${{ github.repository }}\n*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}>\n*Author:* ${{ github.event.pull_request.user.login }}\n*Branch:* `${{ github.event.pull_request.head.ref }}` → `${{ github.event.pull_request.base.ref }}`"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Notify PR merged
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "✅ Pull Request Merged",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*PR Merged*\n*Repository:* ${{ github.repository }}\n*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}>\n*Merged by:* ${{ github.event.pull_request.merged_by.login }}\n*Branch:* `${{ github.event.pull_request.head.ref }}` → `${{ github.event.pull_request.base.ref }}`"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Notify CI failure
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "❌ CI Pipeline Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*CI Failed*\n*Repository:* ${{ github.repository }}\n*Workflow:* ${{ github.event.workflow_run.name }}\n*Branch:* `${{ github.event.workflow_run.head_branch }}`\n*Commit:* <${{ github.event.workflow_run.html_url }}|${{ github.event.workflow_run.head_sha }}>\n*Author:* ${{ github.event.workflow_run.head_commit.author.name }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Notify CI success on main
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["main", "open-source-v1"]'), github.event.workflow_run.head_branch)
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "✅ CI Pipeline Passed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*CI Passed*\n*Repository:* ${{ github.repository }}\n*Branch:* `${{ github.event.workflow_run.head_branch }}`\n*Commit:* <${{ github.event.workflow_run.html_url }}|${{ github.event.workflow_run.head_sha }}>\n*Author:* ${{ github.event.workflow_run.head_commit.author.name }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
