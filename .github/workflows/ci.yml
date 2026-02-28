@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, open-source-v1 ]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -70,7 +74,7 @@ jobs:
           fail_ci_if_error: false
       
       - name: Notify Slack on success
-        if: success() && matrix.python-version == '3.11'
+        if: success() && matrix.python-version == '3.11' && github.event_name == 'push'
         uses: slackapi/slack-github-action@v1
         with:
           payload: |
@@ -90,7 +94,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       
       - name: Notify Slack on failure
-        if: failure() && matrix.python-version == '3.11'
+        if: failure() && matrix.python-version == '3.11' && github.event_name == 'push'
         uses: slackapi/slack-github-action@v1
         with:
           payload: |
