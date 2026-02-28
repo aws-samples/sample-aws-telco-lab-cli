@@ -11,6 +11,7 @@ try:
     from mcp.server import Server
     from mcp.server.stdio import stdio_server
     from mcp.types import CallToolResult, TextContent, Tool
+
     MCP_AVAILABLE = True
 except ImportError:
     MCP_AVAILABLE = False
@@ -89,7 +90,7 @@ async def main():
     if not MCP_AVAILABLE:
         logger.error("MCP module not available. Install with: pip install mcp")
         return
-    
+
     logger.info("Starting TelcoCLI MCP Server")
     async with stdio_server() as (read_stream, write_stream):
         await server.run(read_stream, write_stream, server.create_initialization_options())
