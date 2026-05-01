@@ -219,6 +219,6 @@ Use this release sequence for `main` and tag releases:
 2. Open a PR into `main` and wait for required CI + security checks to pass.
 3. Ensure `pyproject.toml` version matches the release tag (for example: `1.0.1` -> `v1.0.1`).
 4. Create and push a version tag matching `pyproject.toml` (for example `v1.0.1`) from the `aws-samples/sample-aws-telco-lab-cli` repository.
-5. Wait for **CI** to finish successfully on that tag; the **Release** workflow then runs automatically, opens/updates the GitHub Release (with **auto-generated release notes**: commits and merged PRs since the previous release), attaches the wheel and sdist, and uploads to PyPI.
+5. Push the tag: the **Release** workflow starts on the tag push, waits until **CI** has completed successfully on that commit, then creates the GitHub Release (preface + **auto-generated** “What’s Changed”), attaches the wheel and sdist, and uploads to PyPI.
 
 Release artifacts are the source distribution (`.tar.gz`) and wheel (`.whl`) uploaded by GitHub Actions for **semver tags**. In addition, each push to `main` refreshes the public prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** with the same wheel and sdist (convenience snapshot, not a supported release line).

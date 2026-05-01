@@ -1,82 +1,21 @@
 name: Release
 
-# Runs after CI succeeds for a semver tag push. Resolves the tag from the commit if
-# workflow_run.head_branch is empty (common), so the job is not skipped.
+# Tag push gives a reliable ref (github.ref_name). We then wait for the CI workflow to
+# succeed on the same commit — avoids workflow_run head_branch / listTags edge cases that
+# skipped the release job.
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
+  push:
+    tags:
+      - 'v*'
 
 permissions:
-  contents: read
+  contents: write
+  actions: read
 
 jobs:
-  resolve-tag:
-    runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.meta.outputs.tag }}
-    steps:
-      - name: Resolve v* tag for this CI run
-        id: meta
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const wr = context.payload.workflow_run;
-
-            if (wr.conclusion !== "success" || wr.event !== "push") {
-              core.info("Skipping: workflow_run not a successful push.");
-              core.setOutput("tag", "");
-              return;
-            }
-            if (`${owner}/${repo}` !== "aws-samples/sample-aws-telco-lab-cli") {
-              core.info("Skipping: not aws-samples/sample-aws-telco-lab-cli.");
-              core.setOutput("tag", "");
-              return;
-            }
-            if (wr.head_repository.full_name !== "aws-samples/sample-aws-telco-lab-cli") {
-              core.info("Skipping: head_repository is not trusted.");
-              core.setOutput("tag", "");
-              return;
-            }
-
-            const sha = wr.head_sha;
-            const hb = wr.head_branch || "";
-            let tag = "";
-
-            if (hb.startsWith("v") && hb.includes(".")) {
-              tag = hb;
-              core.info(`Using head_branch as tag: ${tag}`);
-            } else {
-              const tags = await github.paginate(github.rest.repos.listTags, {
-                owner,
-                repo,
-                per_page: 100,
-              });
-              const hits = tags.filter(
-                (t) => t.commit.sha === sha && t.name.startsWith("v") && t.name.includes("."),
-              );
-              if (hits.length === 1) {
-                tag = hits[0].name;
-              } else if (hits.length > 1) {
-                hits.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-                tag = hits[hits.length - 1].name;
-                core.warning(`Multiple v* tags on ${sha}; using ${tag}`);
-              } else {
-                core.info(`No v* tag found at ${sha} (head_branch was "${hb}").`);
-              }
-            }
-
-            core.setOutput("tag", tag);
-
   release:
-    needs: resolve-tag
-    if: needs.resolve-tag.outputs.tag != ''
+    if: github.repository == 'aws-samples/sample-aws-telco-lab-cli' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref_name, '.')
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Guard trusted repository
         run: |
@@ -85,9 +24,61 @@ jobs:
             exit 1
           fi
 
+      - name: Wait for CI workflow to succeed on this tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = context.sha;
+
+            let attempts = 0;
+            const maxAttempts = 30;
+            const sleepMs = 10000;
+            let ciSuccess = false;
+            let failureReason = "";
+
+            while (attempts < maxAttempts) {
+              attempts += 1;
+              const runs = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: "ci.yml",
+                event: "push",
+                per_page: 50,
+              });
+
+              const matching = runs.data.workflow_runs.find((run) => run.head_sha === sha);
+              if (matching) {
+                if (matching.status === "completed") {
+                  if (matching.conclusion === "success") {
+                    ciSuccess = true;
+                    core.info(`CI run ${matching.id} completed successfully.`);
+                  } else {
+                    failureReason = `CI run ${matching.id} concluded with ${matching.conclusion}.`;
+                  }
+                  break;
+                }
+
+                core.info(
+                  `Found CI run ${matching.id} for ${sha} with status ${matching.status} (attempt ${attempts}/${maxAttempts})...`,
+                );
+              } else {
+                core.info(`No CI run found yet for ${sha} (attempt ${attempts}/${maxAttempts})...`);
+              }
+
+              await new Promise((resolve) => setTimeout(resolve, sleepMs));
+            }
+
+            if (failureReason) {
+              core.setFailed(failureReason);
+            } else if (!ciSuccess) {
+              core.setFailed("Timed out waiting for a successful CI run for this tag SHA.");
+            }
+
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
           clean: true
 
@@ -104,7 +95,7 @@ jobs:
 
       - name: Verify package version matches tag
         env:
-          TAG_NAME: ${{ needs.resolve-tag.outputs.tag }}
+          TAG_NAME: ${{ github.ref_name }}
         run: |
           TAG_VERSION="${TAG_NAME#v}"
           PKG_VERSION="$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")"
@@ -129,7 +120,7 @@ jobs:
 
       - name: Prepare release notes prefix (first GA v1.0.0)
         run: |
-          TAG="${{ needs.resolve-tag.outputs.tag }}"
+          TAG="${{ github.ref_name }}"
           if [ "$TAG" = "v1.0.0" ]; then
             cp docs/first-official-release.md release-body-prefix.md
           else
@@ -141,8 +132,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ needs.resolve-tag.outputs.tag }}
-          name: ${{ needs.resolve-tag.outputs.tag }}
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           body_path: release-body-prefix.md
           files: dist/*
           generate_release_notes: true
