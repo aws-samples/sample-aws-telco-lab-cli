@@ -1,4 +1,5 @@
 name: CI
+# Smoke: confirms Actions runs on push to main (safe to remove after verification).
 
 on:
   push:
