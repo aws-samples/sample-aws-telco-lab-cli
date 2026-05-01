@@ -30,7 +30,9 @@ jobs:
       
       - name: Run bandit security scan (high severity only)
         run: |
-          bandit -r src -f json -o bandit-report.json
+          # JSON report includes all severities; bandit exits 1 if any finding exists.
+          # --exit-zero keeps this step green so artifacts upload; -lll enforces the real gate.
+          bandit -r src -f json -o bandit-report.json --exit-zero
           bandit -r src -lll
       
       - name: Run dependency vulnerability scan
