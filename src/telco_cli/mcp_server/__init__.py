@@ -91,6 +91,8 @@ async def main():
         logger.error("MCP module not available. Install with: pip install mcp")
         return
 
+    assert server is not None
+
     logger.info("Starting TelcoCLI MCP Server")
     async with stdio_server() as (read_stream, write_stream):
         await server.run(read_stream, write_stream, server.create_initialization_options())

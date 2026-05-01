@@ -26,5 +26,13 @@ __pycache__/
 /build
 dist/
 
+# Local validation virtualenvs
+/.validate-venv/
+/.smoke-venv/
+
 terraform/eks/.terraform
 templates/terraform/eks/modules
+
+# Local Terraform artifacts
+src/telco_cli/templates/terraform/eks/.terraform/
+src/telco_cli/templates/terraform/eks/tfplan

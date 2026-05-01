@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [ main, open-source-v1 ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ main, open-source-v1 ]
 
@@ -13,6 +14,8 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      STRICT_RELEASE_PATH: ${{ (github.event_name == 'push' && (github.ref_name == 'open-source-v1' || startsWith(github.ref, 'refs/tags/v'))) || (github.event_name == 'pull_request' && github.base_ref == 'open-source-v1') }}
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11']
@@ -27,15 +30,15 @@ jobs:
       
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools wheel
-          pip install 'black==24.10.0' isort flake8 mypy bandit safety
-          pip install -r requirements.txt || echo "Some requirements failed, continuing..."
-          pip install -e . --no-deps
+          python -m pip install --upgrade pip wheel
+          python -m pip install 'setuptools>=78.1.1'
+          pip install 'black==26.3.1' 'isort==5.13.2' 'flake8==7.1.1' 'mypy==1.14.1' 'bandit[toml]==1.7.9'
+          pip install -e ".[test,mcp]"
       
       - name: Lint with black
         run: |
           echo "Running black..."
-          black --check --line-length 100 src test
+          black --check --target-version py39 --line-length 100 src test
       
       - name: Check imports with isort
         run: |
@@ -50,8 +53,12 @@ jobs:
       - name: Type check with mypy
         run: |
           echo "Running mypy..."
-          mypy src --ignore-missing-imports --check-untyped-defs || echo "Type check has warnings, continuing..."
-        continue-on-error: true
+          if [ "${STRICT_RELEASE_PATH}" = "true" ]; then
+            mypy src --ignore-missing-imports --check-untyped-defs
+          else
+            mypy src --ignore-missing-imports --check-untyped-defs || echo "Type check has warnings, continuing..."
+          fi
+        continue-on-error: ${{ env.STRICT_RELEASE_PATH != 'true' }}
       
       - name: Run tests with coverage
         run: |
@@ -63,8 +70,13 @@ jobs:
           pytest test/ --cov=telco_cli --cov-report=xml --cov-report=term-missing -v
       
       - name: Security scan with bandit
-        run: bandit -r src || true
-        continue-on-error: true
+        run: |
+          if [ "${STRICT_RELEASE_PATH}" = "true" ]; then
+            bandit -r src -lll
+          else
+            bandit -r src -lll || true
+          fi
+        continue-on-error: ${{ env.STRICT_RELEASE_PATH != 'true' }}
       
       - name: Upload coverage
         uses: codecov/codecov-action@v4
@@ -125,13 +137,24 @@ jobs:
           python-version: '3.9'
       
       - name: Install build tools
-        run: pip install build twine
+        run: |
+          python -m pip install --upgrade pip wheel
+          python -m pip install 'setuptools>=78.1.1'
+          pip install 'build==1.2.2.post1' 'twine==6.1.0'
       
       - name: Build package
         run: python -m build
       
       - name: Check package
         run: twine check dist/*
+
+      - name: Wheel install smoke test
+        run: |
+          python -m venv .smoke-venv
+          . .smoke-venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install dist/*.whl
+          telcocli --help
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

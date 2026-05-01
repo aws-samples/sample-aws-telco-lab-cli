@@ -4,6 +4,16 @@
 
 This repository contains sample code for demonstration purposes. **This code is not intended for production use without proper security hardening, testing, and validation.** The TelcoCLI tool manages sensitive AWS operations including Organizations, IAM, EC2 dedicated hosts, and EKS clusters, which require careful security consideration.
 
+## Security Scanner Policy
+
+Security checks are part of the required CI gate on `open-source-v1` and release tags:
+
+- `bandit` is enforced with high-severity/high-confidence failure thresholds.
+- Dependency vulnerability scanning is enforced with `pip-audit`.
+- Scan artifacts are uploaded in GitHub Actions for triage and auditability.
+
+If a scan fails, findings are triaged in repository pull requests and tracked to resolution before release tags are cut.
+
 ## Reporting Security Issues
 
 **Please do not report security vulnerabilities through public GitHub issues.**

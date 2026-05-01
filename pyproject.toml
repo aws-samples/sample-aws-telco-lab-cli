@@ -1,11 +1,22 @@
+[build-system]
+requires = ["setuptools>=78.1.1", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "telcocli"
 version = "1.0.0"
 description = "AWS Telco CLI - Command line tools for AWS Telco operations"
-authors = [{name = "Amazon Web Services"}]
-license = {text = "MIT-0"}
+authors = [{ name = "Amazon Web Services" }]
+license = { text = "MIT-0" }
 readme = "README.md"
 requires-python = ">=3.9"
+dependencies = [
+    "argcomplete>=2.0.0",
+    "boto3>=1.26.0",
+    "botocore>=1.29.0",
+    "requests>=2.28.0",
+    "rich>=13.0.0",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -14,74 +25,97 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
 ]
 
+[project.optional-dependencies]
+mcp = ["aiohttp>=3.8.0", "mcp>=0.1.0", "pydantic>=2.0.0"]
+test = [
+    "coverage>=7.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+]
+typing = [
+    "boto3-stubs[ec2,iam,organizations,outposts,sts]>=1.26.0",
+    "types-PyYAML>=6.0.0",
+]
+dev = [
+    "bandit[toml]==1.7.9",
+    "black==26.3.1",
+    "build==1.2.2.post1",
+    "flake8==7.1.1",
+    "isort==5.13.2",
+    "mypy==1.14.1",
+    "pip-audit==2.7.3",
+    "twine==6.1.0",
+]
+
 [project.scripts]
 telcocli = "telco_cli.cli:main"
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["test*"]
+
+[tool.setuptools.package-data]
+telco_cli = ["py.typed"]
+
 [tool.black]
 line-length = 100
+target-version = ["py39"]
 
 [tool.isort]
 known_first_party = ["telco_cli"]
-
-# required for compatibility with black:
+line_length = 100
 profile = "black"
 
-# To maintain consistency with other settings
-line_length = 100
+[tool.flake8]
+ignore = ["E203", "W503", "E501"]
+max-line-length = 100
 
-[tool.mypy]
-# See https://mypy.readthedocs.io/en/latest/config_file.html for more mypy options.
-
-# Enables the type-checker on the interior of functions without type annotations.
-check_untyped_defs = true
-
-# Displaying specific error codes makes it easier to silence specific errors
-# See also https://mypy.readthedocs.io/en/latest/error_codes.html
-show_error_codes = true
-
-# Show source code snippets and location markers in error messages
-pretty = true
-
-# Suppresses errors about packages which do not implement type-hint sharing.
-# See also https://mypy.readthedocs.io/en/latest/running_mypy.html#missing-imports.
-ignore_missing_imports = true
-
-# TODO: Enable stricter type checking once all functions are annotated
-# disallow_untyped_defs = true
+[tool.pytest.ini_options]
+addopts = [
+    "--verbose",
+    "--ignore=build/private",
+    "--cov=telco_cli",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--durations=5",
+    "--color=yes",
+]
+testpaths = ["test"]
+xfail_strict = true
 
 [tool.coverage.run]
-source = ["src"]
-omit = [
-    "*/tests/*",
-    "*/__pycache__/*",
-    "*/test_*",
-    "*/conftest.py",
-]
+branch = true
+parallel = true
+source = ["src", "build/lib/*/site-packages/"]
 
 [tool.coverage.report]
 exclude_lines = [
-    # re-enable the standard pragma since custome exclude lines ovverrides it
     "pragma: no cover",
-    
-    # Don't complain about missing debug-only code
     "def __repr__",
     "if self\\.debug",
-    
-    # Don't complain about routine logging and console output
-    # NOTE: logger.error and logger.exception are NOT excluded
-    # These are critical logs that should be tested
     "^\\s*logger\\.debug",
-    "^\\s*logger\\.info", 
+    "^\\s*logger\\.info",
     "^\\s*console\\.print",
-    
-    # Don't complain if tests don't hit defensive assertion code
     "raise AssertionError",
     "raise NotImplementedError",
-    
-    # Don't complain if non-runnable code isn't run
     "if 0:",
     "if __name__ == .__main__.:",
-    
-    # Don't complain about abstract methods
     "@(abc\\.)?abstractmethod",
 ]
+
+[tool.coverage.html]
+directory = "build/brazil-documentation/coverage"
+
+[tool.coverage.xml]
+output = "build/brazil-documentation/coverage/coverage.xml"
+
+[tool.mypy]
+check_untyped_defs = true
+ignore_missing_imports = true
+pretty = true
+show_error_codes = true

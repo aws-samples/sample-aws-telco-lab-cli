@@ -9,10 +9,7 @@ from telco_cli.exceptions import ErrorCode, TelcoCLIException
 from telco_cli.services.eks_deployment_service import EksDeploymentService
 from telco_cli.types.base_command import BaseCommand
 from telco_cli.utils import console, get_logger
-from telco_cli.utils.validation import (
-    validate_cluster_name,
-    validate_vpc_cidr,
-)
+from telco_cli.utils.validation import validate_cluster_name, validate_vpc_cidr
 
 logger = get_logger(__name__)
 

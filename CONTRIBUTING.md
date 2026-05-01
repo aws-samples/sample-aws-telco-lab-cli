@@ -36,6 +36,35 @@ To send us a pull request, please:
 5. Send us a pull request, answering any default questions in the pull request interface.
 6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
 
+### Required checks before opening a PR
+
+For changes targeting `main` or `open-source-v1`, run:
+
+```bash
+pip install -e ".[test,dev]"
+python -m pip install 'setuptools>=78.1.1'
+black --check --target-version py39 src test
+isort --check-only --profile black src test
+flake8 src test --max-line-length=100 --ignore=E203,W503,E501
+mypy src --ignore-missing-imports --check-untyped-defs
+pytest test/ --cov=telco_cli --cov-report=xml --cov-report=term-missing -v
+```
+
+For release-impacting changes, also run:
+
+```bash
+python -m build
+twine check dist/*
+python -m venv .smoke-venv && . .smoke-venv/bin/activate && pip install dist/*.whl && telcocli --help
+```
+
+### Release branch and tag policy
+
+- Use `open-source-v1` as the release integration branch.
+- Release tags must follow `v<semver>` format (for example `v1.0.1`).
+- The tag version must exactly match `[project].version` in `pyproject.toml`.
+- Release publishing is restricted to the upstream `aws-samples/sample-aws-telco-lab-cli` repository.
+
 GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 

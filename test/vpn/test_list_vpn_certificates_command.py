@@ -262,12 +262,10 @@ class TestListVPNCertificatesCommand(unittest.TestCase):
     @patch.object(ListVPNCertificatesCommand, "_run_ssm_command")
     def test_get_certificate_details_success(self, mock_run_ssm):
         """Test getting certificate details successfully."""
-        mock_run_ssm.return_value = {
-            "StandardOutputContent": """subject=CN = partner-nokia
+        mock_run_ssm.return_value = {"StandardOutputContent": """subject=CN = partner-nokia
 notBefore=Sep 10 03:48:20 2025 GMT
 notAfter=Sep  8 03:48:20 2035 GMT
-serial=01"""
-        }
+serial=01"""}
 
         result = self.command._get_certificate_details("i-1234567890abcdef0", ["partner-nokia"])
 
@@ -289,13 +287,11 @@ serial=01"""
     @patch.object(ListVPNCertificatesCommand, "_run_ssm_command")
     def test_get_ccd_configurations_success(self, mock_run_ssm):
         """Test getting CCD configurations successfully."""
-        mock_run_ssm.return_value = {
-            "StandardOutputContent": """=== partner-nokia ===
+        mock_run_ssm.return_value = {"StandardOutputContent": """=== partner-nokia ===
 push "route 10.0.0.0 255.255.255.0"
 push "route 192.168.1.0 255.255.255.0"
 === partner-verizon ===
-No routes configured"""
-        }
+No routes configured"""}
 
         result = self.command._get_ccd_configurations("i-1234567890abcdef0")
 
@@ -806,12 +802,10 @@ push "route 192.168.100.0 255.255.255.0"
 
         def mock_run_ssm_command(instance_id, command):
             if "partner-nokia" in command:
-                return {
-                    "StandardOutputContent": """subject=CN = partner-nokia
+                return {"StandardOutputContent": """subject=CN = partner-nokia
 notBefore=Sep 10 03:48:20 2025 GMT
 notAfter=Sep  8 03:48:20 2035 GMT
-serial=01"""
-                }
+serial=01"""}
             elif "partner-verizon" in command:
                 raise Exception("Certificate file not found")
             else:  # partner-tmobile

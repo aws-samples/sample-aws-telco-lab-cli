@@ -1,6 +1,11 @@
 name: Security Scan
 
 on:
+  push:
+    branches: [ main, open-source-v1 ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ main, open-source-v1 ]
   schedule:
     - cron: '0 0 * * 0'  # Weekly on Sunday
   workflow_dispatch:
@@ -18,19 +23,24 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install bandit safety
+          python -m pip install --upgrade pip wheel
+          python -m pip install 'setuptools>=78.1.1'
+          pip install 'bandit[toml]==1.7.9' 'pip-audit==2.7.3'
           pip install -e .
       
-      - name: Run bandit security scan
-        run: bandit -r src -f json -o bandit-report.json
-        continue-on-error: true
+      - name: Run bandit security scan (high severity only)
+        run: |
+          bandit -r src -f json -o bandit-report.json
+          bandit -r src -lll
       
-      - name: Run safety dependency check
-        run: safety check --json
-        continue-on-error: true
+      - name: Run dependency vulnerability scan
+        run: pip-audit --format=json --output=pip-audit-report.json
       
       - name: Upload security reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: security-reports
-          path: bandit-report.json
+          path: |
+            bandit-report.json
+            pip-audit-report.json
