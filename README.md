@@ -82,7 +82,7 @@ telcocli --profile your-profile-name <command>
 
 ### Dependencies
 
-- **Core**: boto3, botocore (AWS SDK), rich (console output), mcp (Model Context Protocol)
+- **Core**: boto3, botocore (AWS SDK), rich (console output); optional **MCP** via `pip install ".[mcp]"` (the `mcp` PyPI package requires **Python 3.10+**; on 3.9 the extra still installs `aiohttp` / `pydantic` for compatible code paths)
 - **Test**: pytest, pytest-cov, coverage
 
 ## Usage
