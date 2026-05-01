@@ -29,7 +29,8 @@ Push a commit or open a PR to trigger notifications.
 
 ## Notification Events
 
-The workflow sends Slack notifications for:
+The **`Slack Notifications`** workflow (`.github/workflows/slack-notifications.yml`) sends Slack notifications for:
+
 
 - 🔔 **PR Opened** - New pull request created
 - ✅ **PR Merged** - Pull request successfully merged

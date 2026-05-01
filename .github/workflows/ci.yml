@@ -1,5 +1,4 @@
 name: CI
-# Smoke: confirms Actions runs on push to main (safe to remove after verification).
 
 on:
   push:
@@ -85,46 +84,9 @@ jobs:
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
-      
-      - name: Notify Slack on success
-        if: success() && matrix.python-version == '3.11' && github.event_name == 'push' && secrets.SLACK_WEBHOOK_URL != ''
-        uses: slackapi/slack-github-action@v1
-        with:
-          payload: |
-            {
-              "text": "✅ CI Pipeline Passed",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*CI Passed*\n*Repository:* ${{ github.repository }}\n*Branch:* `${{ github.ref_name }}`\n*Commit:* <${{ github.event.head_commit.url }}|${{ github.sha }}>\n*Author:* ${{ github.actor }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      
-      - name: Notify Slack on failure
-        if: failure() && matrix.python-version == '3.11' && github.event_name == 'push' && secrets.SLACK_WEBHOOK_URL != ''
-        uses: slackapi/slack-github-action@v1
-        with:
-          payload: |
-            {
-              "text": "❌ CI Pipeline Failed",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*CI Failed*\n*Repository:* ${{ github.repository }}\n*Branch:* `${{ github.ref_name }}`\n*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>\n*Author:* ${{ github.actor }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # CI pass/fail Slack: see slack-notifications.yml (workflow_run on CI) — avoids
+      # slack-github-action failing this job when SLACK_WEBHOOK_URL is unset.
 
   build:
     runs-on: ubuntu-latest
