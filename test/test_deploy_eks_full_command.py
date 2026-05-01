@@ -64,8 +64,14 @@ class TestDeployEksFullCommand(unittest.TestCase):
             # Operational parameters
             "dry_run": False,
         }
-        defaults.update(overrides)
-        return argparse.Namespace(**defaults)
+        # Keep this test helper resilient to argument shape changes by starting from
+        # real parser defaults, then overriding with explicit test values.
+        parser = argparse.ArgumentParser()
+        self.command.register(parser)
+        parsed = vars(parser.parse_args(["--cluster-name", "test-cluster"]))
+        parsed.update(defaults)
+        parsed.update(overrides)
+        return argparse.Namespace(**parsed)
 
     def test_register_arguments(self):
         """Test argument registration."""
@@ -116,9 +122,10 @@ class TestDeployEksFullCommand(unittest.TestCase):
         # Verify service was called correctly
         mock_service.deploy_full_cluster.assert_called_once()
         call_args = mock_service.deploy_full_cluster.call_args
-        self.assertEqual(call_args.kwargs["dry_run"], True)
-        self.assertIsNotNone(call_args.kwargs["terraform_vars"])
-        self.assertIsNotNone(call_args.kwargs["terraform_dir"])
+        kwargs = call_args[1]
+        self.assertEqual(kwargs["dry_run"], True)
+        self.assertIsNotNone(kwargs["terraform_vars"])
+        self.assertIsNotNone(kwargs["terraform_dir"])
 
     @patch("telco_cli.commands.deploy_eks_full.EksDeploymentService")
     @patch("telco_cli.utils.validation.validate_cluster_name")
@@ -153,9 +160,10 @@ class TestDeployEksFullCommand(unittest.TestCase):
         # Verify service was called correctly
         mock_service.deploy_full_cluster.assert_called_once()
         call_args = mock_service.deploy_full_cluster.call_args
-        self.assertEqual(call_args.kwargs["dry_run"], False)
-        self.assertIsNotNone(call_args.kwargs["terraform_vars"])
-        self.assertIsNotNone(call_args.kwargs["terraform_dir"])
+        kwargs = call_args[1]
+        self.assertEqual(kwargs["dry_run"], False)
+        self.assertIsNotNone(kwargs["terraform_vars"])
+        self.assertIsNotNone(kwargs["terraform_dir"])
 
     @patch("telco_cli.commands.deploy_eks_full.validate_cluster_name")
     def test_run_invalid_cluster_name(self, mock_validate_name):
@@ -232,10 +240,11 @@ class TestDeployEksFullCommand(unittest.TestCase):
         # Verify service was called correctly
         mock_service.deploy_full_cluster.assert_called_once()
         call_args = mock_service.deploy_full_cluster.call_args
-        self.assertEqual(call_args.kwargs["dry_run"], False)
-        self.assertIsNotNone(call_args.kwargs["terraform_vars"])
+        kwargs = call_args[1]
+        self.assertEqual(kwargs["dry_run"], False)
+        self.assertIsNotNone(kwargs["terraform_vars"])
         # Check that deploy_observability is False in terraform_vars
-        self.assertEqual(call_args.kwargs["terraform_vars"]["deploy_observability"], False)
+        self.assertEqual(kwargs["terraform_vars"]["deploy_observability"], False)
 
     @patch("telco_cli.utils.validation.validate_aws_account_id")
     @patch("telco_cli.utils.validation.validate_cluster_name")
