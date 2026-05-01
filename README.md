@@ -65,7 +65,7 @@ pip install ".[test]"
 
 ### Install from CI (wheel + sdist)
 
-**Fully automated:** every push to `main` that passes CI updates the public prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** with fresh wheel and sdist assets and **auto-generated release notes** (commits and merged PRs). You do not need to create a version tag for this install path.
+**Fully automated:** every push to `main` that passes CI updates the public prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** with fresh wheel and sdist assets and a **compare link** for that push (authors and PRs). You do not need to create a version tag for this install path.
 
 Each run also uploads a **`telcocli-dist`** artifact (same files as **Assets** on `ci-build`).
 
