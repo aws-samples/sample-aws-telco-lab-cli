@@ -35,8 +35,23 @@ jobs:
           bandit -r src -f json -o bandit-report.json --exit-zero
           bandit -r src -lll
       
+      # pip-audit runs on Python 3.9 to match telcocli's minimum. Several fixes require
+      # Python >=3.10 (requests 2.33+, filelock 3.20+, pip 26.1+) or urllib3 2.x (blocked
+      # on 3.9 by botocore's urllib3<1.27). Ignores are documented in SECURITY.md; remove
+      # when requires-python is raised or upstream constraints change.
       - name: Run dependency vulnerability scan
-        run: pip-audit --format=json --output=pip-audit-report.json
+        run: |
+          pip-audit \
+            --format=json \
+            --output=pip-audit-report.json \
+            --ignore-vuln GHSA-w853-jp5j-5j7f \
+            --ignore-vuln GHSA-qmgc-5h2g-mvrw \
+            --ignore-vuln GHSA-58qw-9mgm-455v \
+            --ignore-vuln GHSA-gc5v-m9x4-r6x2 \
+            --ignore-vuln GHSA-pq67-6m6q-mj2v \
+            --ignore-vuln GHSA-gm62-xv2j-4w53 \
+            --ignore-vuln GHSA-2xpw-w6gg-jr37 \
+            --ignore-vuln GHSA-38jv-5279-wg99
       
       - name: Upload security reports
         if: always()

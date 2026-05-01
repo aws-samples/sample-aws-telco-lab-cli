@@ -12,6 +12,9 @@ Security checks are part of the required CI gate on `main` and release tags:
 - Dependency vulnerability scanning is enforced with `pip-audit`.
 - Scan artifacts are uploaded in GitHub Actions for triage and auditability.
 
+The scan runs on **Python 3.9** (the package minimum). Some published fixes require **Python 3.10+** (e.g. `requests` 2.33+, `filelock` 3.20+, `pip` 26.1+) or **urllib3 2.x**, which the **Python 3.9** AWS SDK line does not yet take (`botocore` still requires `urllib3<1.27` on 3.9). Those OSV advisories are **ignored in CI** until `requires-python` is raised or dependency constraints change:  
+`GHSA-w853-jp5j-5j7f`, `GHSA-qmgc-5h2g-mvrw` (filelock); `GHSA-58qw-9mgm-455v` (pip); `GHSA-gc5v-m9x4-r6x2` (requests); `GHSA-pq67-6m6q-mj2v`, `GHSA-gm62-xv2j-4w53`, `GHSA-2xpw-w6gg-jr37`, `GHSA-38jv-5279-wg99` (urllib3).
+
 If a scan fails, findings are triaged in repository pull requests and tracked to resolution before release tags are cut.
 
 ## Reporting Security Issues

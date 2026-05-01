@@ -147,21 +147,20 @@ jobs:
           tag_name: ci-build
           target_commitish: ${{ github.sha }}
           name: "CI build (main) — wheel + sdist"
+          generate_release_notes: true
           body: |
-            Prerelease with the latest **`python -m build`** outputs from `main` (same files as the **`telcocli-dist`** workflow artifact).
+            **Automated snapshot:** latest `main` after a green CI run (wheel + sdist match the **`telcocli-dist`** artifact). No tag required.
 
             | | |
             |-|-|
             | **Workflow run** | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} |
             | **Commit** | `${{ github.sha }}` |
 
-            **Install (wheel):** download `telcocli-*.whl` from **Assets** below, then:
+            **Install (wheel):** download `telcocli-*.whl` from **Assets**, then `pip install /path/to/telcocli-*.whl`.
 
-            ```bash
-            pip install /path/to/telcocli-*.whl
-            ```
+            For supported installs use [**PyPI**](https://pypi.org/project/telcocli/) or a [**semver tag release**](https://github.com/${{ github.repository }}/releases). The section below lists commits and merged PRs GitHub associates with this prerelease.
 
-            Prefer [**PyPI**](https://pypi.org/project/telcocli/) or a [**semver tag release**](https://github.com/${{ github.repository }}/releases) for supported installs. This snapshot is convenience-only and updates on every push to `main`.
+            ---
           files: dist/*
           prerelease: true
           make_latest: false

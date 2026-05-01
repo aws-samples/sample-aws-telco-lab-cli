@@ -65,9 +65,11 @@ pip install ".[test]"
 
 ### Install from CI (wheel + sdist)
 
-Every successful [CI run on `main`](https://github.com/aws-samples/sample-aws-telco-lab-cli/actions/workflows/ci.yml?query=branch%3Amain+event%3Apush+is%3Asuccess) uploads a **`telcocli-dist`** artifact (zip containing the wheel and source distribution).
+**Fully automated:** every push to `main` that passes CI updates the public prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** with fresh wheel and sdist assets and **auto-generated release notes** (commits and merged PRs). You do not need to create a version tag for this install path.
 
-- **Public download (no GitHub login):** open the moving prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** and download the files under **Assets** (same build as CI; updated on each push to `main`). Then run `pip install /path/to/telcocli-*.whl`.
+Each run also uploads a **`telcocli-dist`** artifact (same files as **Assets** on `ci-build`).
+
+- **Public download (no GitHub login):** open **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** → **Assets** → download the wheel or sdist, then `pip install /path/to/telcocli-*.whl`.
 - **From the Actions UI (requires sign-in):** open the run → **Artifacts** → download **`telcocli-dist`**. Artifacts are kept **90 days**.
 
 For production use, prefer **PyPI** (after publish) or a **version tag** release over the `ci-build` snapshot.
@@ -216,7 +218,7 @@ Use this release sequence for `main` and tag releases:
    ```
 2. Open a PR into `main` and wait for required CI + security checks to pass.
 3. Ensure `pyproject.toml` version matches the release tag (for example: `1.0.1` -> `v1.0.1`).
-4. Create and push a `v*` tag from the `aws-samples/sample-aws-telco-lab-cli` repository.
-5. Confirm the GitHub Release is created and PyPI publish completes.
+4. Create and push a version tag matching `pyproject.toml` (for example `v1.0.1`) from the `aws-samples/sample-aws-telco-lab-cli` repository.
+5. Wait for **CI** to finish successfully on that tag; the **Release** workflow then runs automatically, opens/updates the GitHub Release (with **auto-generated release notes**: commits and merged PRs since the previous release), attaches the wheel and sdist, and uploads to PyPI.
 
 Release artifacts are the source distribution (`.tar.gz`) and wheel (`.whl`) uploaded by GitHub Actions for **semver tags**. In addition, each push to `main` refreshes the public prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** with the same wheel and sdist (convenience snapshot, not a supported release line).
