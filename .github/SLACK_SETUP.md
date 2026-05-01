@@ -19,6 +19,10 @@
 5. Value: Paste your Slack webhook URL
 6. Click **Add secret**
 
+If `SLACK_WEBHOOK_URL` is **not** set, CI still passes: Slack notify steps are skipped (no `slack-github-action` error).
+
+Use an **Incoming Webhook** URL (`https://hooks.slack.com/services/...`) unless you have confirmed your Slack **Workflow** trigger URL (`https://hooks.slack.com/triggers/...`) accepts the same JSON payload POSTed by `slackapi/slack-github-action@v1`.
+
 ### 3. Test the Integration
 
 Push a commit or open a PR to trigger notifications.
