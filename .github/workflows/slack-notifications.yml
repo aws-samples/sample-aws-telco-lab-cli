@@ -3,9 +3,9 @@ name: Slack Notifications
 on:
   pull_request:
     types: [opened, closed, reopened]
-    branches: [ main, open-source-v1 ]
+    branches: [ main ]
   push:
-    branches: [ main, open-source-v1 ]
+    branches: [ main ]
   workflow_run:
     workflows: ["CI"]
     types: [completed]
@@ -75,7 +75,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       
       - name: Notify CI success on main
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["main", "open-source-v1"]'), github.event.workflow_run.head_branch)
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
         uses: slackapi/slack-github-action@v1
         with:
           payload: |

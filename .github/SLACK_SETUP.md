@@ -30,7 +30,7 @@ The workflow sends Slack notifications for:
 - 🔔 **PR Opened** - New pull request created
 - ✅ **PR Merged** - Pull request successfully merged
 - ❌ **CI Failed** - Any CI workflow fails
-- ✅ **CI Passed** - CI succeeds on main/open-source-v1 branches
+- ✅ **CI Passed** - CI succeeds on the `main` branch
 
 ## Customization
 

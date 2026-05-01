@@ -3,7 +3,7 @@
 # Requires: gh CLI (GitHub CLI) installed and authenticated
 
 REPO="aws-samples/sample-aws-telco-lab-cli"
-BRANCHES=("main" "open-source-v1")
+BRANCHES=("main")
 
 echo "Setting up branch protection for $REPO..."
 

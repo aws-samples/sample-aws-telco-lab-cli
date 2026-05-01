@@ -190,7 +190,7 @@ See instructions in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Open-Source Release Flow
 
-Use this release sequence for `open-source-v1` and tag releases:
+Use this release sequence for `main` and tag releases:
 
 1. Run local checks:
    ```bash
@@ -205,7 +205,7 @@ Use this release sequence for `open-source-v1` and tag releases:
    twine check dist/*
    python -m venv .smoke-venv && . .smoke-venv/bin/activate && pip install dist/*.whl && telcocli --help
    ```
-2. Open a PR into `open-source-v1` and wait for required CI + security checks to pass.
+2. Open a PR into `main` and wait for required CI + security checks to pass.
 3. Ensure `pyproject.toml` version matches the release tag (for example: `1.0.1` -> `v1.0.1`).
 4. Create and push a `v*` tag from the `aws-samples/sample-aws-telco-lab-cli` repository.
 5. Confirm the GitHub Release is created and PyPI publish completes.

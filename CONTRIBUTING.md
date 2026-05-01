@@ -38,7 +38,7 @@ To send us a pull request, please:
 
 ### Required checks before opening a PR
 
-For changes targeting `main` or `open-source-v1`, run:
+For changes targeting `main`, run:
 
 ```bash
 pip install -e ".[test,dev]"
@@ -60,7 +60,7 @@ python -m venv .smoke-venv && . .smoke-venv/bin/activate && pip install dist/*.w
 
 ### Release branch and tag policy
 
-- Use `open-source-v1` as the release integration branch.
+- Use `main` as the default integration branch; releases are cut from tags on `main`.
 - Release tags must follow `v<semver>` format (for example `v1.0.1`).
 - The tag version must exactly match `[project].version` in `pyproject.toml`.
 - Release publishing is restricted to the upstream `aws-samples/sample-aws-telco-lab-cli` repository.

@@ -5,7 +5,6 @@ This document describes the branch protection rules for the TelcoCLI repository.
 ## Protected Branches
 
 - `main`
-- `open-source-v1`
 
 ## Protection Rules
 
@@ -48,9 +47,9 @@ cd .github
 
 1. Go to repository **Settings** → **Branches**
 2. Click **Add branch protection rule**
-3. For each branch (`main`, `open-source-v1`):
+3. For branch `main`:
 
-   **Branch name pattern:** `main` or `open-source-v1`
+   **Branch name pattern:** `main`
    
    Enable:
    - ☑️ Require a pull request before merging

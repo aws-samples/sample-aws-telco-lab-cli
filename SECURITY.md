@@ -6,7 +6,7 @@ This repository contains sample code for demonstration purposes. **This code is 
 
 ## Security Scanner Policy
 
-Security checks are part of the required CI gate on `open-source-v1` and release tags:
+Security checks are part of the required CI gate on `main` and release tags:
 
 - `bandit` is enforced with high-severity/high-confidence failure thresholds.
 - Dependency vulnerability scanning is enforced with `pip-audit`.

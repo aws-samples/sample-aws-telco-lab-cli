@@ -2,10 +2,10 @@ name: Security Scan
 
 on:
   push:
-    branches: [ main, open-source-v1 ]
+    branches: [ main ]
     tags: [ "v*" ]
   pull_request:
-    branches: [ main, open-source-v1 ]
+    branches: [ main ]
   schedule:
     - cron: '0 0 * * 0'  # Weekly on Sunday
   workflow_dispatch:
