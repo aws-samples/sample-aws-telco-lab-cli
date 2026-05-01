@@ -63,6 +63,15 @@ pip install -e .
 pip install ".[test]"
 ```
 
+### Install from CI (wheel + sdist)
+
+Every successful [CI run on `main`](https://github.com/aws-samples/sample-aws-telco-lab-cli/actions/workflows/ci.yml?query=branch%3Amain+event%3Apush+is%3Asuccess) uploads a **`telcocli-dist`** artifact (zip containing the wheel and source distribution).
+
+- **Public download (no GitHub login):** open the moving prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** and download the files under **Assets** (same build as CI; updated on each push to `main`). Then run `pip install /path/to/telcocli-*.whl`.
+- **From the Actions UI (requires sign-in):** open the run → **Artifacts** → download **`telcocli-dist`**. Artifacts are kept **90 days**.
+
+For production use, prefer **PyPI** (after publish) or a **version tag** release over the `ci-build` snapshot.
+
 ### AWS Credentials Setup
 
 TelcoCLI requires AWS credentials to interact with AWS services. Configure them using one of:
@@ -210,4 +219,4 @@ Use this release sequence for `main` and tag releases:
 4. Create and push a `v*` tag from the `aws-samples/sample-aws-telco-lab-cli` repository.
 5. Confirm the GitHub Release is created and PyPI publish completes.
 
-Release artifacts are the source distribution (`.tar.gz`) and wheel (`.whl`) uploaded by GitHub Actions.
+Release artifacts are the source distribution (`.tar.gz`) and wheel (`.whl`) uploaded by GitHub Actions for **semver tags**. In addition, each push to `main` refreshes the public prerelease **[`ci-build`](https://github.com/aws-samples/sample-aws-telco-lab-cli/releases/tag/ci-build)** with the same wheel and sdist (convenience snapshot, not a supported release line).

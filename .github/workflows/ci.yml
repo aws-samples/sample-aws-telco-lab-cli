@@ -119,8 +119,52 @@ jobs:
           pip install dist/*.whl
           telcocli --help
       
-      - name: Upload artifacts
+      - name: Upload build artifacts (wheel + sdist)
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: telcocli-dist
           path: dist/
+          retention-days: 90
+          if-no-files-found: error
+
+  publish-ci-snapshot:
+    name: Publish CI snapshot to GitHub Releases
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.repository == 'aws-samples/sample-aws-telco-lab-cli' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: telcocli-dist
+          path: dist
+
+      - name: Attach wheel and sdist to moving prerelease (ci-build)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ci-build
+          target_commitish: ${{ github.sha }}
+          name: "CI build (main) — wheel + sdist"
+          body: |
+            Prerelease with the latest **`python -m build`** outputs from `main` (same files as the **`telcocli-dist`** workflow artifact).
+
+            | | |
+            |-|-|
+            | **Workflow run** | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} |
+            | **Commit** | `${{ github.sha }}` |
+
+            **Install (wheel):** download `telcocli-*.whl` from **Assets** below, then:
+
+            ```bash
+            pip install /path/to/telcocli-*.whl
+            ```
+
+            Prefer [**PyPI**](https://pypi.org/project/telcocli/) or a [**semver tag release**](https://github.com/${{ github.repository }}/releases) for supported installs. This snapshot is convenience-only and updates on every push to `main`.
+          files: dist/*
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
