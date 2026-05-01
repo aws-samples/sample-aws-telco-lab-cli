@@ -141,13 +141,16 @@ jobs:
           name: telcocli-dist
           path: dist
 
+      # Do not use generate_release_notes here: GitHub picks a poor baseline for the moving
+      # ci-build tag (often ancient history), so contributors and PRs look wrong. Compare
+      # link uses this push's parent commit → HEAD. Releases still show as @github-actions
+      # because GITHUB_TOKEN creates them (expected).
       - name: Attach wheel and sdist to moving prerelease (ci-build)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ci-build
           target_commitish: ${{ github.sha }}
           name: "CI build (main) — wheel + sdist"
-          generate_release_notes: true
           body: |
             **Automated snapshot:** latest `main` after a green CI run (wheel + sdist match the **`telcocli-dist`** artifact). No tag required.
 
@@ -155,12 +158,13 @@ jobs:
             |-|-|
             | **Workflow run** | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} |
             | **Commit** | `${{ github.sha }}` |
+            | **Changes in this push** | [${{ github.event.before }}…${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/compare/${{ github.event.before }}...${{ github.sha }}) |
 
             **Install (wheel):** download `telcocli-*.whl` from **Assets**, then `pip install /path/to/telcocli-*.whl`.
 
-            For supported installs use [**PyPI**](https://pypi.org/project/telcocli/) or a [**semver tag release**](https://github.com/${{ github.repository }}/releases). The section below lists commits and merged PRs GitHub associates with this prerelease.
+            For supported installs use [**PyPI**](https://pypi.org/project/telcocli/) or a [**semver tag release**](https://github.com/${{ github.repository }}/releases). Open the compare link above for authors and merged PRs for this snapshot.
 
-            ---
+            *This prerelease is created by the **GitHub Actions** app using `GITHUB_TOKEN`, so the “released by” line shows `github-actions`, not individual maintainers.*
           files: dist/*
           prerelease: true
           make_latest: false
